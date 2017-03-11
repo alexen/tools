@@ -71,6 +71,10 @@ int main()
                << "\tmin: " << min << "\n"
                << "\tmax: " << max << "\n"
                << "\tavg: " << (sum / cycles) << "\n";
+
+          logger.info() << "Verbose enabled text";
+          logger.debug( false ) << "Verbose disabled text";
+          logger.info() << "Verbose enabled text";
      }
      catch( const std::exception& e )
      {

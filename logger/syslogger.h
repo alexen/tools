@@ -18,7 +18,8 @@ namespace logger {
 /// Класс для вывода сообщений в syslog:
 /// - поддерживающий формирование сообщений с помощью потокового вывода;
 /// - обеспечивает нарезку длинных сообщений на порции перед выводом в syslog;
-/// - хранит сроковое значение префикса, который будет выводиться перед каждым сообщением.
+/// - хранит сроковое значение префикса, который будет выводиться перед каждым сообщением;
+/// - поддерживает простое отключение вывода некоторых сообщений;
 ///
 /// Для формирования сообщений используется потоковый объект std::ostringstream, который
 /// создается только один раз при создании объекта SysLogger.
@@ -41,6 +42,16 @@ namespace logger {
 /// //
 /// logger.info() << "Text, " << boost::posix_time::second_clock::now() << ", pi: " << 3.1416;
 ///
+/// // Также можно отключать некоторый (дебаговый, трассировочный) вывод внешним признаком
+/// // который может задаваться извне, например, в конфиге программы или в качестве параметра
+/// // командной строки
+/// //
+/// bool verboseLogging = getExternalParameter( "verbose" );
+///
+/// // Нижеследующая строка не будет ни сформирована, не выведена в лог, если verboseLogging == false
+/// //
+/// logger.debug( verboseLogging ) << "Some long debug text message";
+///
 /// @endcode
 class SysLogger
 {
@@ -50,27 +61,36 @@ class SysLogger
      public:
           /// Создает объект потока
           ///
-          /// Выполняет установку внутренних переменных (все переменные - лишь ссылки на объекты)
-          LogStream( std::ostringstream& os, const std::function< void( std::string&& ) >& flushMessageCb );
+          /// Выполняет установку внутренних переменных
+          /// @param verbose признак подробного вывода (если false - сообшение не формируется и колбек не вызывается)
+          /// @param os внешний буфер формирования строки сообщения
+          /// @param flushMessageCb колбек, в который передается сформированное сообщение при разрушении объекта
+          LogStream( bool verbose, std::ostringstream& os, std::function< void( std::string&& ) >&& flushMessageCb );
 
           /// Разрушает объект потока с записью сообщения в лог
           ///
           /// При разрушении объекта осуществляется передача сформированного сообщения в колбек
           /// после чего поток очищается
+          /// @note Колбек вызывается только при установленном флаге verbose
           /// @attention Колбек не должен генерировать исключений!
           ~LogStream();
 
           /// Шаблонный оператор вывода в поток
+          /// @note Формирование потока осуществляется только при установленном флаге @p verbose
           template< typename T >
           LogStream& operator<<( const T& t )
           {
-               os_ << t;
+               if( verbose_ )
+               {
+                    os_ << t;
+               }
                return *this;
           }
 
      private:
+          const bool verbose_ = true;
           std::ostringstream& os_;
-          const std::function< void( std::string&& ) >& flushMessage_;
+          std::function< void( std::string&& ) > flushMessage_;
      };
 
 public:
@@ -89,20 +109,21 @@ public:
      /// объекта @p LogStream в качестве колбека передается функция flush(), связанная с предустановленными
      /// параметрами с помощью std::bind().
      /// @param severity уровень сообщения (макросы LOG_* из файла syslog.h)
+     /// @param verbose признак подробного вывода (отключает формирование сообщение и вывод его в лог)
      /// @return временный объект LogStream
-     LogStream operator()( int severity );
+     LogStream operator()( int severity, bool verbose = true );
 
      /// Аналог вызова operator() с параметром LOG_INFO
-     LogStream info();
+     LogStream info( bool verbose = true );
 
      /// Аналог вызова operator() с параметром LOG_DEBUG
-     LogStream debug();
+     LogStream debug( bool verbose = true );
 
      /// Аналог вызова operator() с параметром LOG_WARNING
-     LogStream warning();
+     LogStream warning( bool verbose = true );
 
      /// Аналог вызова operator() с параметром LOG_ERR
-     LogStream error();
+     LogStream error( bool verbose = true );
 
 private:
      /// Обеспечивает запись сообщения непосредственно в лог с помощью вызова функции syslog()

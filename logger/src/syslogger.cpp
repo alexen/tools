@@ -12,16 +12,19 @@
 namespace logger {
 
 
-SysLogger::LogStream::LogStream( std::ostringstream& os, const std::function< void( std::string&& ) >& flushMessageCb )
-     : os_( os ), flushMessage_( flushMessageCb )
+SysLogger::LogStream::LogStream( bool verbose, std::ostringstream& os, std::function< void( std::string&& ) >&& flushMessageCb )
+     : verbose_( verbose ), os_( os ), flushMessage_( std::move( flushMessageCb ) )
 {}
 
 
 SysLogger::LogStream::~LogStream()
 {
-     /// Функция не должна кидать исключениЙ
-     flushMessage_( os_.str() );
-     os_.str( "" );
+     if( verbose_ )
+     {
+          /// Функция не должна кидать исключениЙ
+          flushMessage_( os_.str() );
+          os_.str( "" );
+     }
 }
 
 
@@ -48,33 +51,33 @@ SysLogger::SysLogger( std::string&& prefix )
 {}
 
 
-SysLogger::LogStream SysLogger::operator()( int severity )
+SysLogger::LogStream SysLogger::operator()( int severity, bool verbose )
 {
-     return LogStream( ostr_, std::bind( flush, severity, std::cref( prefix_ ), std::placeholders::_1 ) );
+     return LogStream( verbose, ostr_, std::bind( flush, severity, std::cref( prefix_ ), std::placeholders::_1 ) );
 }
 
 
-SysLogger::LogStream SysLogger::info()
+SysLogger::LogStream SysLogger::info( bool verbose )
 {
-     return (*this)( LOG_INFO );
+     return (*this)( LOG_INFO, verbose );
 }
 
 
-SysLogger::LogStream SysLogger::debug()
+SysLogger::LogStream SysLogger::debug( bool verbose )
 {
-     return (*this)( LOG_DEBUG );
+     return (*this)( LOG_DEBUG, verbose );
 }
 
 
-SysLogger::LogStream SysLogger::warning()
+SysLogger::LogStream SysLogger::warning( bool verbose )
 {
-     return (*this)( LOG_WARNING );
+     return (*this)( LOG_WARNING, verbose );
 }
 
 
-SysLogger::LogStream SysLogger::error()
+SysLogger::LogStream SysLogger::error( bool verbose )
 {
-     return (*this)( LOG_ERR );
+     return (*this)( LOG_ERR, verbose );
 }
 
 

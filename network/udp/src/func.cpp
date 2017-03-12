@@ -6,27 +6,14 @@
 ///
 
 #include <network/udp/func.h>
+#include <unistd.h>
 #include <string.h>
 #include <memory>
-#include <boost/throw_exception.hpp>
 
 
 namespace tools {
 namespace network {
 namespace udp {
-
-namespace {
-namespace throw_exception {
-
-
-void systemError( const std::error_code& ec, const char* what )
-{
-     BOOST_THROW_EXCEPTION( std::system_error( ec, what ) );
-}
-
-
-}  // namespace throw_exception
-}  // namespace {unnamed}
 
 
 Connection::UniversalSockaddr::UniversalSockaddr( const sockaddr* sa, socklen_t salen )
@@ -67,7 +54,7 @@ int socket( int pfamily ) throw( std::system_error )
      const auto sock = socket( pfamily, ec );
      if( ec )
      {
-          throw_exception::systemError( ec, "create UDP socket" );
+          throw std::system_error( ec, "create UDP socket" );
      }
      return sock;
 }
@@ -98,10 +85,14 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
 Connection connect( const char* const hostname, int port ) throw( std::system_error )
 {
      std::error_code ec;
-     const auto& c = connect( hostname, port, ec );
+
+     /// @attention В данной функции нельзя объявлять переменную как константную ссылку,
+     /// т.к. при возвращении объекта из функции осуществляется (ненужное!) копирование объекта
+     /// с последующим вызовом деструктора, в котором осуществляется закрытие дескриптора!
+     const auto c = connect( hostname, port, ec );
      if( ec )
      {
-          throw_exception::systemError( ec, "create UDP connection" );
+          throw std::system_error( ec, "create UDP connection" );
      }
      return c;
 }
@@ -145,10 +136,10 @@ int send( const char* const hostname, int port, const std::string& message, std:
 int send( const char* const hostname, int port, const char* data, std::size_t datalen ) throw( std::system_error )
 {
      std::error_code ec;
-     const auto c = connect( hostname, port, ec );
+     const auto& c = connect( hostname, port, ec );
      if( ec )
      {
-          throw_exception::systemError( ec, "create UDP connection" );
+          throw std::system_error( ec, "create UDP connection" );
      }
      return send( c, data, datalen );
 }

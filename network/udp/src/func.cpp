@@ -20,6 +20,20 @@ namespace tools {
 namespace network {
 namespace udp {
 
+namespace {
+namespace throw_exception {
+
+
+void systemError( const std::error_code& ec, const char* what )
+{
+     BOOST_THROW_EXCEPTION( std::system_error( ec, what ) );
+}
+
+
+}  // namespace throw_exception
+}  // namespace {unnamed}
+
+
 
 struct UniversalSockaddr
 {
@@ -36,7 +50,7 @@ struct UniversalSockaddr
           sockaddr_in sa;
           sockaddr_in6 sa6;
      }
-     addr = {{ 0 }};
+     addr;
 };
 
 
@@ -50,7 +64,6 @@ struct Connection
 
      const int sockfd = 0;
      const int family = 0;
-     const socklen_t addrlen = 0;
      const UniversalSockaddr sockaddr;
 };
 
@@ -72,7 +85,7 @@ int socket( int pfamily ) throw( std::system_error )
      const auto sock = socket( pfamily, ec );
      if( ec )
      {
-          BOOST_THROW_EXCEPTION( std::system_error( ec, "create UDP socket" ) );
+          throw_exception::systemError( ec, "create UDP socket" );
      }
      return sock;
 }
@@ -106,9 +119,62 @@ Connection connect( const char* const hostname, int port ) throw( std::system_er
      const auto& c = connect( hostname, port, ec );
      if( ec )
      {
-          BOOST_THROW_EXCEPTION( std::system_error( ec, "create UDP connection" ) );
+          throw_exception::systemError( ec, "create UDP connection" );
      }
      return c;
+}
+
+
+int send( const Connection& c, const char* data, std::size_t datalen ) noexcept
+{
+     return sendto(
+          c.sockfd,
+          data,
+          datalen,
+          0,
+          reinterpret_cast< const sockaddr* >( &c.sockaddr.addr ),
+          c.sockaddr.addrlen );
+}
+
+
+int send( const Connection& c, const std::string& message ) noexcept
+{
+     return send( c, message.c_str(), message.size() );
+}
+
+
+int send( const char* const hostname, int port, const char* data, std::size_t datalen, std::error_code& ec ) noexcept
+{
+     const auto& c = connect( hostname, port, ec );
+     if( ec )
+     {
+          return -1;
+     }
+     return send( c, data, datalen );
+}
+
+
+int send( const char* const hostname, int port, const std::string& message, std::error_code& ec ) noexcept
+{
+     return send( hostname, port, message.c_str(), message.size(), ec );
+}
+
+
+int send( const char* const hostname, int port, const char* data, std::size_t datalen ) throw( std::system_error )
+{
+     std::error_code ec;
+     const auto c = connect( hostname, port, ec );
+     if( ec )
+     {
+          throw_exception::systemError( ec, "create UDP connection" );
+     }
+     return send( c, data, datalen );
+}
+
+
+int send( const char* const hostname, int port, const std::string& message ) throw( std::system_error )
+{
+     return send( hostname, port, message.c_str(), message.size() );
 }
 
 

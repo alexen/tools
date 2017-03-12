@@ -16,14 +16,20 @@ namespace network {
 namespace udp {
 
 
-Connection::UniversalSockaddr::UniversalSockaddr( const sockaddr* sa, socklen_t salen )
+Connection::UniversalSockaddr::UniversalSockaddr() noexcept
+{
+     memset( &addr, 0, sizeof( addr ) );
+}
+
+
+Connection::UniversalSockaddr::UniversalSockaddr( const sockaddr* sa, socklen_t salen ) noexcept
      : addrlen( salen )
 {
      memcpy( &addr, sa, salen );
 }
 
 
-Connection::Connection( int sfd, int fam, const sockaddr* sa, socklen_t salen )
+Connection::Connection( int sfd, int fam, const sockaddr* sa, socklen_t salen ) noexcept
      : sockfd( sfd ), family( fam ), addr( sa, salen )
 {}
 

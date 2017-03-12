@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 add_definitions(-std=c++11)
-add_definitions(-Wall -Werror -Wpedantic)
+add_definitions(-Wall -Werror -Wpedantic -Wextra)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
@@ -14,4 +14,4 @@ add_subdirectory(network)
 
 set(NAME tools)
 add_executable(${NAME} main.cpp)
-target_link_libraries(${NAME} logger stopwatch)
+target_link_libraries(${NAME} logger stopwatch network)

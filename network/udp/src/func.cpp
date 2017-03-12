@@ -6,11 +6,6 @@
 ///
 
 #include <network/udp/func.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <string.h>
 #include <memory>
 #include <boost/throw_exception.hpp>
@@ -34,38 +29,25 @@ void systemError( const std::error_code& ec, const char* what )
 }  // namespace {unnamed}
 
 
-
-struct UniversalSockaddr
+Connection::UniversalSockaddr::UniversalSockaddr( const sockaddr* sa, socklen_t salen )
+     : addrlen( salen )
 {
-     UniversalSockaddr() {}
+     memcpy( &addr, sa, salen );
+}
 
-     UniversalSockaddr( const sockaddr* sa, socklen_t salen )
-          : addrlen( salen )
+
+Connection::Connection( int sfd, int fam, const sockaddr* sa, socklen_t salen )
+     : sockfd( sfd ), family( fam ), addr( sa, salen )
+{}
+
+
+Connection::~Connection()
+{
+     if( sockfd > 0 )
      {
-          memcpy( &addr, sa, salen );
+          close( sockfd );
      }
-
-     const socklen_t addrlen = 0;
-     union {
-          sockaddr_in sa;
-          sockaddr_in6 sa6;
-     }
-     addr;
-};
-
-
-struct Connection
-{
-     Connection() {}
-
-     Connection( int sfd, int fam, const sockaddr* sa, socklen_t salen )
-          : sockfd( sfd ), family( fam ), sockaddr( sa, salen )
-     {}
-
-     const int sockfd = 0;
-     const int family = 0;
-     const UniversalSockaddr sockaddr;
-};
+}
 
 
 int socket( int pfamily, std::error_code& ec ) noexcept
@@ -132,8 +114,8 @@ int send( const Connection& c, const char* data, std::size_t datalen ) noexcept
           data,
           datalen,
           0,
-          reinterpret_cast< const sockaddr* >( &c.sockaddr.addr ),
-          c.sockaddr.addrlen );
+          reinterpret_cast< const sockaddr* >( &c.addr.addr ),
+          c.addr.addrlen );
 }
 
 

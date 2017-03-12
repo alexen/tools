@@ -7,6 +7,11 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <system_error>
 
 
@@ -15,7 +20,32 @@ namespace network {
 namespace udp {
 
 
-struct Connection;
+struct Connection
+{
+private:
+     struct UniversalSockaddr
+     {
+          UniversalSockaddr() {}
+          UniversalSockaddr( const sockaddr* sa, socklen_t salen );
+
+          const socklen_t addrlen = 0;
+          union {
+               sockaddr_in sa;
+               sockaddr_in6 sa6;
+          }
+          addr;
+     };
+
+public:
+     Connection() {}
+     Connection( int sfd, int fam, const sockaddr* sa, socklen_t salen );
+
+     ~Connection();
+
+     const int sockfd = 0;
+     const int family = 0;
+     const UniversalSockaddr addr;
+};
 
 
 Connection connect( const char* const hostname, int port, std::error_code& ec ) noexcept;

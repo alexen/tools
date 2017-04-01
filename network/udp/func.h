@@ -21,7 +21,7 @@ namespace udp {
 
 
 /// Класс для хранения данных UDP-соединения
-struct Connection
+class Connection
 {
 private:
      /// Внутренний класс для хранения универсального адреса (IPv4 или IPv6)

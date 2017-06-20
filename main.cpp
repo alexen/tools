@@ -14,16 +14,6 @@
 
 
 namespace curl {
-namespace throw_exception {
-
-
-void curlError( const std::string& message, const CURLcode code )
-{
-     throw std::runtime_error{ message + ": " + curl_easy_strerror( code ) };
-}
-
-
-} // namespace throw_exception
 
 
 class Curl

@@ -29,14 +29,16 @@ CURL* CurlRaii::init()
 
 
 CurlRaii::CurlRaii()
-     : curl_{ std::move( CurlRaii::init() ) }
+     : curl_{ CurlRaii::init() }
 {}
 
 
 CurlRaii::~CurlRaii()
 {
-     resetSlist();
-     resetCurl();
+     curl_slist_free_all( slist_ );
+     curl_easy_cleanup( curl_ );
+     slist_ = nullptr;
+     curl_ = nullptr;
 }
 
 
@@ -44,11 +46,17 @@ CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
 {
      resetSlist();
 
+
+CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
+{
+     curl_slist* slist = nullptr;
      for( auto&& item: headers )
      {
-          slist_ = curl_slist_append( slist_, (item.first + ": " + item.second).c_str() );
+          slist = curl_slist_append( slist, (item.first + ": " + item.second).c_str() );
      }
-     curl_easy_setopt( curl_, CURLOPT_HTTPHEADER, slist_ );
+     setOpt( CURLOPT_HTTPHEADER, slist );
+     curl_slist_free_all( slist_ );
+     slist_ = slist;
      return *this;
 }
 
@@ -65,17 +73,7 @@ void CurlRaii::perform()
 }
 
 
-void CurlRaii::resetSlist() noexcept
 {
-     curl_slist_free_all( slist_ );
-     slist_ = nullptr;
-}
-
-
-void CurlRaii::resetCurl() noexcept
-{
-     curl_easy_cleanup( curl_ );
-     curl_ = nullptr;
 }
 
 

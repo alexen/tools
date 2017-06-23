@@ -35,8 +35,6 @@ public:
 
 private:
      static CURL* init();
-     void resetSlist() noexcept;
-     void resetCurl() noexcept;
 
      CURL* curl_ = nullptr;
      curl_slist* slist_ = nullptr;

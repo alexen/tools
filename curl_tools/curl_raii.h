@@ -20,6 +20,7 @@ class CurlRaii
 {
 public:
      CurlRaii();
+     explicit CurlRaii( const std::string& url );
      ~CurlRaii();
 
      template< typename T >
@@ -29,11 +30,21 @@ public:
           return *this;
      }
 
+     CurlRaii& setUrl( const std::string& url );
      CurlRaii& setHeaders( std::map< std::string, std::string >&& headers );
+     CurlRaii& setResponseStream( std::ostream& );
+
+     int getHttpResponseStatus() const;
 
      void perform();
 
      void perform( CURLcode& retCode ) noexcept;
+
+     CURL* native()
+     {
+          return curl_;
+     }
+
 private:
      static CURL* init();
 

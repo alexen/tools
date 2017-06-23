@@ -8,13 +8,32 @@
 #include <curl_tools/curl_raii.h>
 
 #include <stdexcept>
-#include <algorithm>
+#include <utility>
+#include <ostream>
+#include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
 
 
 namespace curl {
 namespace tools {
 namespace raii {
+
+
+namespace {
+namespace inner {
+
+
+std::size_t toOstream( const char* const ptr, std::size_t size, std::size_t nmemb, void* userdata )
+{
+     std::ostream& ostr = *static_cast< std::ostream* >( userdata );
+     const auto bytes = size * nmemb;
+     ostr.write( ptr, bytes );
+     return bytes;
+}
+
+
+} // namespace inner
+} // namespace {unnamed}
 
 
 CURL* CurlRaii::init()
@@ -33,6 +52,13 @@ CurlRaii::CurlRaii()
 {}
 
 
+CurlRaii::CurlRaii( const std::string& url )
+     : CurlRaii{}
+{
+     setUrl( url );
+}
+
+
 CurlRaii::~CurlRaii()
 {
      curl_slist_free_all( slist_ );
@@ -42,9 +68,11 @@ CurlRaii::~CurlRaii()
 }
 
 
-CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
+CurlRaii& CurlRaii::setUrl( const std::string& url )
 {
-     resetSlist();
+     setOpt( CURLOPT_URL, url.c_str() );
+     return *this;
+}
 
 
 CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
@@ -59,6 +87,24 @@ CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
      slist_ = slist;
      return *this;
 }
+
+
+CurlRaii& CurlRaii::setResponseStream( std::ostream& ostr )
+{
+     setOpt( CURLOPT_WRITEFUNCTION, inner::toOstream );
+     setOpt( CURLOPT_WRITEDATA, reinterpret_cast< void* >( std::addressof( ostr ) ) );
+     return *this;
+}
+
+
+
+int CurlRaii::getHttpResponseStatus() const
+{
+     long status = 0;
+     curl_easy_getinfo( curl_, CURLINFO_HTTP_CODE, &status );
+     return static_cast< int >( status );
+}
+
 
 
 void CurlRaii::perform()

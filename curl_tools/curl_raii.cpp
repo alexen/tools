@@ -63,7 +63,8 @@ CurlRaii& CurlRaii::setHeaders( std::map< std::string, std::string >&& headers )
 
 void CurlRaii::perform()
 {
-     const auto rc = curl_easy_perform( curl_ );
+     CURLcode rc = CURLE_OK;
+     perform( rc );
      if( rc != CURLE_OK )
      {
           BOOST_THROW_EXCEPTION(
@@ -73,7 +74,9 @@ void CurlRaii::perform()
 }
 
 
+void CurlRaii::perform( CURLcode& retCode ) noexcept
 {
+     retCode = curl_easy_perform( curl_ );
 }
 
 

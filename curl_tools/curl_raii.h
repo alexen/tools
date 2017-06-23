@@ -33,6 +33,7 @@ public:
 
      void perform();
 
+     void perform( CURLcode& retCode ) noexcept;
 private:
      static CURL* init();
 

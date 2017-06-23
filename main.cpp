@@ -13,25 +13,14 @@
 #include <curl_tools/curl_raii.h>
 
 
-int main()
+int main( int argc, char** argv )
 {
      try
      {
-          curl::tools::raii::CurlRaii curlRaii;
-          curlRaii
-               .setOpt( CURLOPT_URL, "www.yandex.ru" )
-               .setHeaders({
-                    { "Authorization",  "Basic JKhliUGHKYGkjhgk" },
-                    { "Content-Type",   "plain/text" }
-               })
-               .perform();
+          const auto url = argc > 1 ? argv[ 1 ] : "www.yandex.ru";
 
-          curlRaii
-               .setHeaders({
-                    { "Authorization",  "Bearer GDHHHHHHHHHHGDKJJJJJJJJJJJJJJHEGYYYYYYYYYYYYY" },
-                    { "Content-Type",   "json" },
-                    { "Content-Length", "234" }
-               })
+          curl::tools::raii::CurlRaii{ url }
+               .setResponseStream( std::cout )
                .perform();
      }
      catch( const std::exception& e )
@@ -39,6 +28,5 @@ int main()
           std::cerr << "exception: " << boost::diagnostic_information( e ) << '\n';
           return 1;
      }
-
      return 0;
 }

@@ -23,6 +23,12 @@ namespace {
 namespace inner {
 
 
+std::string makeCurlErrorString( CURLcode code )
+{
+     return curl_easy_strerror( code );
+}
+
+
 std::size_t toOstream( const char* const ptr, std::size_t size, std::size_t nmemb, void* userdata )
 {
      std::ostream& ostr = *static_cast< std::ostream* >( userdata );
@@ -114,8 +120,7 @@ void CurlRaii::perform()
      if( rc != CURLE_OK )
      {
           BOOST_THROW_EXCEPTION(
-               std::runtime_error{ "curl error: "
-                    + std::string{ curl_easy_strerror( rc ) } } );
+               std::runtime_error{ "curl error: " + inner::makeCurlErrorString( rc ) } );
      }
 }
 

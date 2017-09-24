@@ -1,4 +1,6 @@
 set(NAME logger)
-add_library(${NAME} src/syslogger.cpp src/tools.cpp)
+set(HDRS syslogger.h tools.h)
+set(SRCS src/syslogger.cpp src/tools.cpp)
+add_library(${NAME} ${SRCS})
 install(TARGETS ${NAME} LIBRARY DESTINATION lib)
-install(FILES syslogger.h DESTINATION include/logger)
+install(FILES ${HDRS} DESTINATION include/tools/${NAME})

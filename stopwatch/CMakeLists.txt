@@ -1,4 +1,6 @@
 set(NAME stopwatch)
-add_library(${NAME} src/stopwatch.cpp src/stopwatch_io.cpp)
+set(HDRS stopwatch.h stopwatch_io.h)
+set(SRCS src/stopwatch.cpp src/stopwatch_io.cpp)
+add_library(${NAME} ${SRCS})
 install(TARGETS ${NAME} LIBRARY DESTINATION lib)
-install(FILES stopwatch.h stopwatch_io.h DESTINATION include/stopwatch)
+install(FILES ${HDRS} DESTINATION include/tools/${NAME})

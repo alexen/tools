@@ -52,6 +52,9 @@ void setBasicAuth(
 void setUserAgent( const types::CurlUptr& curl, const std::string& userAgent );
 
 
+void setResponseHeadersOutput( const types::CurlUptr& curl, std::ostream& );
+
+
 long get(
      const types::CurlUptr& curl,
      const types::CurlHeadersListUptr& headers,

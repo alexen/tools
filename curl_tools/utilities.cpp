@@ -21,7 +21,7 @@ namespace {
 namespace inner {
 
 
-static std::size_t responseToOstream(
+static std::size_t toOstream(
      const char* const ptr,
      const std::size_t size,
      const std::size_t nmemb,
@@ -54,7 +54,7 @@ static long request(
      {
           curl_easy_setopt( curl.get(), CURLOPT_HTTPHEADER, headers.get() );
      }
-     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, responseToOstream );
+     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEDATA, &response );
 
      const auto ret = curl_easy_perform( curl.get() );
@@ -116,6 +116,13 @@ void setBasicAuth(
 void setUserAgent( const types::CurlUptr& curl, const std::string& userAgent )
 {
      curl_easy_setopt( curl.get(), CURLOPT_USERAGENT, userAgent.c_str() );
+}
+
+
+void setResponseHeadersOutput( const types::CurlUptr& curl, std::ostream& ostr )
+{
+     curl_easy_setopt( curl.get(), CURLOPT_HEADERFUNCTION, inner::toOstream );
+     curl_easy_setopt( curl.get(), CURLOPT_WRITEHEADER, &ostr );
 }
 
 

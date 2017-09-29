@@ -33,7 +33,6 @@ inline types::CurlHeadersListUptr makeNull< types::CurlHeadersListUptr >()
      return types::CurlHeadersListUptr{ nullptr, []( curl_slist* ){} };
 }
 
-
 types::CurlUptr makeCurl( bool verbose = false );
 
 

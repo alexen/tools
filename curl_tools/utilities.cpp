@@ -21,6 +21,23 @@ namespace {
 namespace inner {
 
 
+class CurlGlobalInitializer {
+public:
+     CurlGlobalInitializer()
+     {
+          curl_global_init( CURL_GLOBAL_ALL );
+     }
+
+     ~CurlGlobalInitializer()
+     {
+          curl_global_cleanup();
+     }
+};
+
+
+CurlGlobalInitializer curlGlobalInitializer;
+
+
 static std::size_t toOstream(
      const char* const ptr,
      const std::size_t size,

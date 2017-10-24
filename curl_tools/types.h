@@ -13,8 +13,7 @@
 #include <curl/curl.h>
 
 
-namespace curl {
-namespace tools {
+namespace curl_tools {
 namespace types {
 
 
@@ -25,5 +24,4 @@ using Headers = std::map< std::string, std::string >;
 
 
 } // namespace types
-} // namespace tools
-} // namespace curl
+} // namespace curl_tools

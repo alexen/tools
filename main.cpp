@@ -12,12 +12,13 @@
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
 
+#include <curl_tools/requests.h>
 #include <curl_tools/utilities.h>
 
 
-int main( int argc, char** argv )
+int main( /*int argc, char** argv*/ )
 {
-     using namespace curl::tools;
+     using namespace curl_tools;
 
      try
      {
@@ -48,13 +49,15 @@ int main( int argc, char** argv )
           utilities::setBasicAuth( curl, "alexen", "111111" );
           utilities::setUserAgent( curl, "Self-Writed-Curl-Functions" );
 
-          const auto status = utilities::post(
-               curl,
-               headers,
-               url,
-               body.data(),
-               body.size(),
-               std::cout );
+          const auto status =
+               requests::post(
+                    curl,
+                    headers,
+                    url,
+                    body.data(),
+                    body.size(),
+                    std::cout
+                    );
 
           std::cout << "\nStatus: " << status << "\n";
      }

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <curl_tools/types.h>
+#include "types.h"
 
 
 namespace curl_tools {

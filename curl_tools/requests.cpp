@@ -8,6 +8,7 @@
 #include "requests.h"
 #include "errors.h"
 #include "inner.h"
+#include "utilities.h"
 
 #include <ostream>
 
@@ -36,7 +37,10 @@ static long request(
      const std::string& url,
      const char* const data,
      std::size_t size,
-     std::ostream& response )
+     std::ostream& response,
+     const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
+     const boost::optional< boost::posix_time::time_duration >& requestTimeout
+     )
 {
      curl_easy_setopt( curl.get(), CURLOPT_URL, url.c_str() );
      if( data )
@@ -51,6 +55,15 @@ static long request(
      }
      curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, inner::toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEDATA, &response );
+
+     if( connectionTimeout )
+     {
+          utilities::setConnectionTimeout( curl, *connectionTimeout );
+     }
+     if( requestTimeout )
+     {
+          utilities::setRequestTimeout( curl, *requestTimeout );
+     }
 
      const auto ret = curl_easy_perform( curl.get() );
      if( ret != CURLE_OK )
@@ -69,18 +82,24 @@ long get(
      const types::CurlUptr& curl,
      const types::CurlHeadersListUptr& headers,
      const std::string& url,
-     std::ostream& response )
+     std::ostream& response,
+     const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
+     const boost::optional< boost::posix_time::time_duration >& requestTimeout
+     )
 {
-     return request( curl, headers, url, nullptr, 0, response );
+     return request( curl, headers, url, nullptr, 0, response, connectionTimeout, requestTimeout );
 }
 
 
 long get(
      const types::CurlUptr& curl,
      const std::string& url,
-     std::ostream& response )
+     std::ostream& response,
+     const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
+     const boost::optional< boost::posix_time::time_duration >& requestTimeout
+     )
 {
-     return get( curl, inner::consts::nullHeader, url, response );
+     return get( curl, inner::consts::nullHeader, url, response, connectionTimeout, requestTimeout );
 }
 
 
@@ -90,9 +109,12 @@ long post(
      const std::string& url,
      const char* const data,
      std::size_t size,
-     std::ostream& response )
+     std::ostream& response,
+     const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
+     const boost::optional< boost::posix_time::time_duration >& requestTimeout
+     )
 {
-     return request( curl, headers, url, data, size, response );
+     return request( curl, headers, url, data, size, response, connectionTimeout, requestTimeout );
 }
 
 
@@ -101,9 +123,12 @@ long post(
      const std::string& url,
      const char* const data,
      std::size_t size,
-     std::ostream& response )
+     std::ostream& response,
+     const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
+     const boost::optional< boost::posix_time::time_duration >& requestTimeout
+     )
 {
-     return post( curl, inner::consts::nullHeader, url, data, size, response );
+     return post( curl, inner::consts::nullHeader, url, data, size, response, connectionTimeout, requestTimeout );
 }
 
 

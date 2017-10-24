@@ -5,9 +5,10 @@
 ///     Author: alexen
 ///
 
-#include <boost/assert.hpp>
-#include <curl_tools/inner.h>
+#include "inner.h"
+
 #include <ostream>
+#include <boost/assert.hpp>
 
 
 namespace curl_tools {

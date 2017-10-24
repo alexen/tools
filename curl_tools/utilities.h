@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include <curl_tools/types.h>
 #include <iosfwd>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include "types.h"
 
 
 namespace curl_tools {
@@ -34,6 +35,18 @@ void setUserAgent( const types::CurlUptr& curl, const std::string& userAgent );
 
 
 void setResponseHeadersOutput( const types::CurlUptr& curl, std::ostream& );
+
+
+void setConnectionTimeout(
+     const types::CurlUptr& curl,
+     const boost::posix_time::time_duration& timeout
+     );
+
+
+void setRequestTimeout(
+     const types::CurlUptr& curl,
+     const boost::posix_time::time_duration& timeout
+     );
 
 
 } // namespace utilities

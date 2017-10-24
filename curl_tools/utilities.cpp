@@ -70,5 +70,23 @@ void setResponseHeadersOutput( const types::CurlUptr& curl, std::ostream& ostr )
 }
 
 
+void setConnectionTimeout(
+     const types::CurlUptr& curl,
+     const boost::posix_time::time_duration& timeout
+     )
+{
+     curl_easy_setopt( curl.get(),  CURLOPT_CONNECTTIMEOUT, timeout.total_seconds() );
+}
+
+
+void setRequestTimeout(
+     const types::CurlUptr& curl,
+     const boost::posix_time::time_duration& timeout
+     )
+{
+     curl_easy_setopt( curl.get(),  CURLOPT_TIMEOUT, timeout.total_seconds() );
+}
+
+
 } // namespace utilities
 } // namespace curl_tools

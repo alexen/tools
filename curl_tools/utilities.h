@@ -15,7 +15,7 @@ namespace curl_tools {
 namespace utilities {
 
 
-types::CurlUptr makeCurl( bool verbose = false );
+types::CurlUptr makeCurl();
 
 
 types::CurlHeadersListUptr makeHeadersList( types::Headers&& headers );

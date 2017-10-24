@@ -5,25 +5,26 @@
 ///     Author: alexen
 ///
 
+#include "utilities.h"
+#include "errors.h"
+#include "inner.h"
+
 #include <ostream>
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
-#include <curl_tools/inner.h>
-#include <curl_tools/utilities.h>
 
 
 namespace curl_tools {
 namespace utilities {
 
 
-types::CurlUptr makeCurl( bool verbose )
+types::CurlUptr makeCurl()
 {
      auto curl = curl_easy_init();
      if( !curl )
      {
-          BOOST_THROW_EXCEPTION( std::runtime_error{ "curl init error" } );
+          BOOST_THROW_EXCEPTION( errors::CurlError{ "curl init error" } );
      }
-     curl_easy_setopt( curl, CURLOPT_VERBOSE, static_cast< long >( verbose ) );
      return types::CurlUptr{ curl, curl_easy_cleanup };
 }
 

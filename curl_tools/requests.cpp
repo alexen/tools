@@ -5,12 +5,14 @@
 ///     Author: alexen
 ///
 
+#include "requests.h"
+#include "errors.h"
+#include "inner.h"
+
 #include <ostream>
 
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
-#include <curl_tools/inner.h>
-#include <curl_tools/requests.h>
 
 
 namespace curl_tools {
@@ -18,6 +20,14 @@ namespace requests {
 
 
 namespace {
+
+
+static long getHttpStatus( const types::CurlUptr& curl )
+{
+     long httpStatus = 0;
+     curl_easy_getinfo( curl.get(), CURLINFO_RESPONSE_CODE, &httpStatus );
+     return httpStatus;
+}
 
 
 static long request(
@@ -45,12 +55,10 @@ static long request(
      const auto ret = curl_easy_perform( curl.get() );
      if( ret != CURLE_OK )
      {
-          BOOST_THROW_EXCEPTION( std::runtime_error{ curl_easy_strerror( ret ) } );
+          BOOST_THROW_EXCEPTION( errors::CurlRequestError{ ret } );
      }
 
-     long httpStatus = 0;
-     curl_easy_getinfo( curl.get(), CURLINFO_RESPONSE_CODE, &httpStatus );
-     return httpStatus;
+     return getHttpStatus( curl );
 }
 
 

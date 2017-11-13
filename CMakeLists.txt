@@ -10,7 +10,7 @@ include_directories(${CURL_INCLUDE_DIRS})
 
 set(NAME using_curl)
 
-add_subdirectory(curl_tools)
+add_subdirectory(tools)
 
 add_executable(${NAME}
      main.cpp

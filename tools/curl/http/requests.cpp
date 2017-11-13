@@ -5,25 +5,26 @@
 ///     Author: alexen
 ///
 
-#include "requests.h"
-#include "errors.h"
-#include "inner.h"
-#include "utilities.h"
+#include <tools/curl/http/requests.h>
 
 #include <ostream>
-
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
+#include <tools/curl/base/utils.h>
+#include <tools/curl/base/write_func.h>
+#include <tools/curl/http/errors.h>
 
 
-namespace curl_tools {
+namespace tools {
+namespace curl {
+namespace http {
 namespace requests {
 
 
 namespace {
 
 
-static long getHttpStatus( const types::CurlUptr& curl )
+static long getHttpStatus( const base::types::CurlUptr& curl )
 {
      long httpStatus = 0;
      curl_easy_getinfo( curl.get(), CURLINFO_RESPONSE_CODE, &httpStatus );
@@ -32,8 +33,8 @@ static long getHttpStatus( const types::CurlUptr& curl )
 
 
 static long request(
-     const types::CurlUptr& curl,
-     const types::CurlHeadersListUptr& headers,
+     const base::types::CurlUptr& curl,
+     const base::types::CurlSlistUptr& headers,
      const std::string& url,
      const char* const data,
      std::size_t size,
@@ -53,22 +54,22 @@ static long request(
      {
           curl_easy_setopt( curl.get(), CURLOPT_HTTPHEADER, headers.get() );
      }
-     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, inner::toOstream );
+     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, base::write_funcs::toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEDATA, &response );
 
      if( connectionTimeout )
      {
-          utilities::setConnectionTimeout( curl, *connectionTimeout );
+          base::utils::setConnectionTimeout( curl, *connectionTimeout );
      }
      if( requestTimeout )
      {
-          utilities::setRequestTimeout( curl, *requestTimeout );
+          base::utils::setRequestTimeout( curl, *requestTimeout );
      }
 
      const auto ret = curl_easy_perform( curl.get() );
      if( ret != CURLE_OK )
      {
-          BOOST_THROW_EXCEPTION( errors::CurlRequestError{ ret } );
+          BOOST_THROW_EXCEPTION( errors::HttpRequestError{ ret } );
      }
 
      return getHttpStatus( curl );
@@ -79,8 +80,8 @@ static long request(
 
 
 long get(
-     const types::CurlUptr& curl,
-     const types::CurlHeadersListUptr& headers,
+     const base::types::CurlUptr& curl,
+     const base::types::CurlSlistUptr& headers,
      const std::string& url,
      std::ostream& response,
      const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
@@ -92,20 +93,21 @@ long get(
 
 
 long get(
-     const types::CurlUptr& curl,
+     const base::types::CurlUptr& curl,
      const std::string& url,
      std::ostream& response,
      const boost::optional< boost::posix_time::time_duration >& connectionTimeout,
      const boost::optional< boost::posix_time::time_duration >& requestTimeout
      )
 {
-     return get( curl, inner::consts::nullHeader, url, response, connectionTimeout, requestTimeout );
+     static base::types::CurlSlistUptr noHeaders{ nullptr, []( curl_slist* ){} };
+     return get( curl, noHeaders, url, response, connectionTimeout, requestTimeout );
 }
 
 
 long post(
-     const types::CurlUptr& curl,
-     const types::CurlHeadersListUptr& headers,
+     const base::types::CurlUptr& curl,
+     const base::types::CurlSlistUptr& headers,
      const std::string& url,
      const char* const data,
      std::size_t size,
@@ -119,7 +121,7 @@ long post(
 
 
 long post(
-     const types::CurlUptr& curl,
+     const base::types::CurlUptr& curl,
      const std::string& url,
      const char* const data,
      std::size_t size,
@@ -128,9 +130,9 @@ long post(
      const boost::optional< boost::posix_time::time_duration >& requestTimeout
      )
 {
-     return post( curl, inner::consts::nullHeader, url, data, size, response, connectionTimeout, requestTimeout );
+     static base::types::CurlSlistUptr noHeaders{ nullptr, []( curl_slist* ){} };
+     return post( curl, noHeaders, url, data, size, response, connectionTimeout, requestTimeout );
 }
 
 
-} // namespace requests
-} // namespace curl_tools
+}}}}

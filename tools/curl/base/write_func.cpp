@@ -1,41 +1,20 @@
 ///
-/// inner.cpp
+/// write_func.cpp
 ///
-/// Created on: Oct 24, 2017
+/// Created on: Nov 13, 2017
 ///     Author: alexen
 ///
 
-#include "inner.h"
+#include <tools/curl/base/write_func.h>
 
 #include <ostream>
 #include <boost/assert.hpp>
 
 
-namespace curl_tools {
-namespace inner {
-
-
-namespace {
-
-
-class CurlGlobalInitializer {
-public:
-     CurlGlobalInitializer()
-     {
-          curl_global_init( CURL_GLOBAL_ALL );
-     }
-
-     ~CurlGlobalInitializer()
-     {
-          curl_global_cleanup();
-     }
-};
-
-
-CurlGlobalInitializer curlGlobalInitializer;
-
-
-} // namespace {unnamed}
+namespace tools {
+namespace curl {
+namespace base {
+namespace write_funcs {
 
 
 std::size_t toOstream(
@@ -52,5 +31,4 @@ std::size_t toOstream(
 }
 
 
-} // namespace inner
-} // namespace curl_tools
+}}}}

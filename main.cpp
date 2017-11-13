@@ -11,46 +11,45 @@
 #include <stdexcept>
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
+#include <tools/curl/base/utils.h>
+#include <tools/curl/http/utils.h>
+#include <tools/curl/http/requests.h>
 
-#include <curl_tools/requests.h>
-#include <curl_tools/utilities.h>
+static const std::string body = R"({
+     "message": "My Bonny is over the ocean..."
+})";
 
 
 int main( /*int argc, char** argv*/ )
 {
-     using namespace curl_tools;
+     using namespace tools::curl;
 
      try
      {
           const auto url = "http://127.0.0.1:9999";
 
-          const auto curl = utilities::makeCurl();
+          const auto curl = base::utils::makeCurl();
 
           std::cout << "Request:\n";
 
           auto headers =
-               utilities::makeHeadersList({
+               http::utils::makeHttpHeaders({
                     { "X-Extra-Header", "extra header value" }
                });
 
-          utilities::updateHeadersList( headers, {
+          http::utils::extendHttpHeaders( headers, {
                { "X-Another-Extra-Header", "some another extra value" }
           });
 
-          const std::string body = ""
-               "{\n"
-               "\t\"message\": \"My Bonny is over the ocean...\"\n"
-               "}\n";
-
-          utilities::updateHeadersList( headers, {
+          http::utils::extendHttpHeaders( headers, {
                { "Content-Type", "application/json" }
           });
 
-          utilities::setBasicAuth( curl, "alexen", "111111" );
-          utilities::setUserAgent( curl, "Self-Writed-Curl-Functions" );
+          http::utils::setBasicAuth( curl, "alexen", "111111" );
+          http::utils::setUserAgent( curl, "Self-Written-Curl-Functions" );
 
           const auto status =
-               requests::post(
+               http::requests::post(
                     curl,
                     headers,
                     url,

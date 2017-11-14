@@ -10,8 +10,8 @@
 #include <ostream>
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
+#include <tools/curl/base/data_writer.h>
 #include <tools/curl/base/utils.h>
-#include <tools/curl/base/write_func.h>
 #include <tools/curl/http/errors.h>
 
 
@@ -54,7 +54,7 @@ static long request(
      {
           curl_easy_setopt( curl.get(), CURLOPT_HTTPHEADER, headers.get() );
      }
-     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, base::write_funcs::toOstream );
+     curl_easy_setopt( curl.get(), CURLOPT_WRITEFUNCTION, base::data_writer::toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEDATA, &response );
 
      if( connectionTimeout )

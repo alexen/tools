@@ -10,9 +10,9 @@
 #include <ostream>
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
+#include <tools/curl/base/data_writer.h>
 #include <tools/curl/http/errors.h>
 #include <tools/curl/base/utils.h>
-#include <tools/curl/base/write_func.h>
 
 
 namespace tools {
@@ -69,7 +69,7 @@ void setUserAgent( const base::types::CurlUptr& curl, const std::string& userAge
 
 void setResponseHeadersOutput( const base::types::CurlUptr& curl, std::ostream& ostr )
 {
-     curl_easy_setopt( curl.get(), CURLOPT_HEADERFUNCTION, base::write_funcs::toOstream );
+     curl_easy_setopt( curl.get(), CURLOPT_HEADERFUNCTION, base::data_writer::toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEHEADER, &ostr );
 }
 

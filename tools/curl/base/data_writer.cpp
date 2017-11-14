@@ -5,16 +5,15 @@
 ///     Author: alexen
 ///
 
-#include <tools/curl/base/write_func.h>
-
 #include <ostream>
 #include <boost/assert.hpp>
+#include <tools/curl/base/data_writer.h>
 
 
 namespace tools {
 namespace curl {
 namespace base {
-namespace write_funcs {
+namespace data_writer {
 
 
 std::size_t toOstream(

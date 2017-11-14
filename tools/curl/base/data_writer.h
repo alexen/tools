@@ -13,7 +13,7 @@
 namespace tools {
 namespace curl {
 namespace base {
-namespace write_funcs {
+namespace data_writer {
 
 
 std::size_t toOstream(

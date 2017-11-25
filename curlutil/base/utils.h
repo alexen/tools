@@ -10,7 +10,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
-#include <tools/curl/base/types.h>
+#include <curlutil/base/types.h>
 
 
 namespace tools {

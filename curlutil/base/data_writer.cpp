@@ -7,7 +7,7 @@
 
 #include <ostream>
 #include <boost/assert.hpp>
-#include <tools/curl/base/data_writer.h>
+#include <curlutil/base/data_writer.h>
 
 
 namespace tools {

@@ -5,14 +5,13 @@
 ///     Author: alexen
 ///
 
-#include <tools/curl/http/utils.h>
-
 #include <ostream>
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
-#include <tools/curl/base/data_writer.h>
-#include <tools/curl/http/errors.h>
-#include <tools/curl/base/utils.h>
+#include <curlutil/base/data_writer.h>
+#include <curlutil/base/utils.h>
+#include <curlutil/http/errors.h>
+#include <curlutil/http/utils.h>
 
 
 namespace tools {

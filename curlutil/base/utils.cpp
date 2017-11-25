@@ -5,12 +5,11 @@
 ///     Author: alexen
 ///
 
-#include <tools/curl/base/utils.h>
-
 #include <ostream>
 #include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
-#include <tools/curl/base/errors.h>
+#include <curlutil/base/errors.h>
+#include <curlutil/base/utils.h>
 
 
 namespace tools {

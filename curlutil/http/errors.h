@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <tools/curl/base/errors.h>
+#include <curlutil/base/errors.h>
 
 
 namespace tools {

@@ -1,4 +1,4 @@
-set(NAME curltools)
+set(NAME curlutil)
 add_library(${NAME}
      http/requests.cpp
      http/utils.cpp

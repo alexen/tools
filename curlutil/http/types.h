@@ -16,6 +16,7 @@ namespace http {
 namespace types {
 
 
+/// Предопределенный тип для HTTP-хедеров
 using Headers = std::map< std::string, std::string >;
 
 

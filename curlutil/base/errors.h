@@ -19,12 +19,20 @@ namespace base {
 namespace errors {
 
 
+/// Формирует строку ошибки cURL по коду @p code
+///
+/// @attention Только для внутреннего использования! Запрещается использовать вне библиотеки!
+/// Неизменнось сигнатуры и сам факт наличия данной функции от версии к версии не гарантируется!
 inline std::string makeErrorString( const CURLcode code )
 {
      return curl_easy_strerror( code );
 }
 
 
+/// Формирует строку ошибки cURL по коду @p code, расширяя строку @p what
+///
+/// @attention Только для внутреннего использования! Запрещается использовать вне библиотеки!
+/// Неизменнось сигнатуры и сам факт наличия данной функции от версии к версии не гарантируется!
 inline std::string buildErrorString( const CURLcode code, std::string&& what )
 {
      what += ": ";
@@ -33,6 +41,7 @@ inline std::string buildErrorString( const CURLcode code, std::string&& what )
 }
 
 
+/// Базовый класс исключений библиотеки
 struct CurlError : std::runtime_error, boost::exception {
      explicit
      CurlError( const std::string& what )

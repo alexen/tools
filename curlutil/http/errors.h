@@ -16,6 +16,7 @@ namespace http {
 namespace errors {
 
 
+/// Базовый класс для ошибок при работе через HTTP
 struct HttpRequestError : base::errors::CurlError {
      explicit HttpRequestError( const std::string& what ) : base::errors::CurlError{ what } {}
      explicit HttpRequestError( const CURLcode code ) : base::errors::CurlError{ code } {}

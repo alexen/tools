@@ -16,6 +16,10 @@ namespace base {
 namespace data_writer {
 
 
+/// Внутренний колбэк для cURL
+///
+/// Используется в качестве колбэка для функций cURL
+/// @see https://curl.haxx.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
 std::size_t toOstream(
      const char* const ptr,
      const std::size_t size,

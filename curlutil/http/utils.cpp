@@ -20,7 +20,7 @@ namespace http {
 namespace utils {
 
 
-base::types::CurlSlistUptr makeHttpHeaders( types::Headers&& headers )
+base::types::CurlSlistUptr makeHttpHeaders( types::Headers&& headers ) noexcept
 {
      auto slist = base::utils::makeSlist();
      extendHttpHeaders( slist, std::move( headers ) );
@@ -30,8 +30,7 @@ base::types::CurlSlistUptr makeHttpHeaders( types::Headers&& headers )
 
 void extendHttpHeaders(
      base::types::CurlSlistUptr& slist,
-     types::Headers&& headers
-     )
+     types::Headers&& headers ) noexcept
 {
      for( auto&& item: headers )
      {
@@ -43,7 +42,7 @@ void extendHttpHeaders(
 void extendHttpHeaders(
      base::types::CurlSlistUptr& slist,
      const std::string& key,
-     const std::string& value )
+     const std::string& value ) noexcept
 {
      auto item = key + ": " + value;
      base::utils::addSlistItem( slist, std::move( item ) );
@@ -53,20 +52,20 @@ void extendHttpHeaders(
 void setBasicAuth(
      const base::types::CurlUptr& curl,
      const std::string& login,
-     const std::string& password )
+     const std::string& password ) noexcept
 {
      curl_easy_setopt( curl.get(), CURLOPT_USERNAME, login.c_str() );
      curl_easy_setopt( curl.get(), CURLOPT_PASSWORD, password.c_str() );
 }
 
 
-void setUserAgent( const base::types::CurlUptr& curl, const std::string& userAgent )
+void setUserAgent( const base::types::CurlUptr& curl, const std::string& userAgent ) noexcept
 {
      curl_easy_setopt( curl.get(), CURLOPT_USERAGENT, userAgent.c_str() );
 }
 
 
-void setResponseHeadersOutput( const base::types::CurlUptr& curl, std::ostream& ostr )
+void setResponseHeadersOutput( const base::types::CurlUptr& curl, std::ostream& ostr ) noexcept
 {
      curl_easy_setopt( curl.get(), CURLOPT_HEADERFUNCTION, base::data_writer::toOstream );
      curl_easy_setopt( curl.get(), CURLOPT_WRITEHEADER, &ostr );

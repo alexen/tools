@@ -22,6 +22,17 @@ namespace http {
 namespace requests {
 
 
+/// Реализует HTTP-запрос GET
+///
+/// Использует внутренние функции-посредники @p request() и функцию @p getHttpStatus()
+///
+/// @param curl указатель CurlUptr, инициализированный с помощью функции @see base::utils::makeCurl()
+/// @param headers HTTP-хедеры - указатель на CurlSlistUptr, инициализированный с помощью функции @see base::utils::makeSlist()
+/// @param url URL или IP-адрес удаленного хоста
+/// @param response ссылка на выходной поток для сохранения ответа удаленного сервера
+/// @param connectionTimeout таймаут для ожидания подключения к удаленному хосту
+/// @param requestTimeout таймаут для ожидания ответа на запрос от удаленного хоста
+/// @throw errors::HttpRequestError при любых ошибках, в том числе при возврате ответа HTTP отличного от 200
 long get(
      const base::types::CurlUptr& curl,
      const base::types::CurlSlistUptr& headers,
@@ -32,6 +43,7 @@ long get(
      );
 
 
+/// Перегрузка для использования запроса без HTTP-хедеров
 long get(
      const base::types::CurlUptr& curl,
      const std::string& url,
@@ -41,6 +53,19 @@ long get(
      );
 
 
+/// Реализует HTTP-запрос POST
+///
+/// Использует внутренние функции-посредники @p request() и функцию @p getHttpStatus()
+///
+/// @param curl указатель CurlUptr, инициализированный с помощью функции @see base::utils::makeCurl()
+/// @param headers HTTP-хедеры - указатель на CurlSlistUptr, инициализированный с помощью функции @see base::utils::makeSlist()
+/// @param url URL или IP-адрес удаленного хоста
+/// @param data указатель на передаваемые на удаленный сервер данные
+/// @param size размер данных, отправляемых на удаленный сервер
+/// @param response ссылка на выходной поток для сохранения ответа удаленного сервера
+/// @param connectionTimeout таймаут для ожидания подключения к удаленному хосту
+/// @param requestTimeout таймаут для ожидания ответа на запрос от удаленного хоста
+/// @throw errors::HttpRequestError при любых ошибках, в том числе при возврате ответа HTTP отличного от 200
 long post(
      const base::types::CurlUptr& curl,
      const base::types::CurlSlistUptr& headers,
@@ -53,6 +78,7 @@ long post(
      );
 
 
+/// Перегрузка для использования запроса без HTTP-хедеров
 long post(
      const base::types::CurlUptr& curl,
      const std::string& url,

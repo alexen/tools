@@ -18,7 +18,7 @@ namespace base {
 namespace utils {
 
 
-types::CurlUptr makeCurl()
+types::CurlUptr makeCurl() throw( errors::CurlError )
 {
      auto curl = curl_easy_init();
      if( !curl )
@@ -29,25 +29,25 @@ types::CurlUptr makeCurl()
 }
 
 
-types::CurlSlistUptr makeSlist()
+types::CurlSlistUptr makeSlist() noexcept
 {
      return types::CurlSlistUptr{ nullptr, curl_slist_free_all };
 }
 
 
-void addSlistItem( types::CurlSlistUptr& slist, const char* const item )
+void addSlistItem( types::CurlSlistUptr& slist, const char* const item ) noexcept
 {
      slist.reset( curl_slist_append( slist.release(), item ) );
 }
 
 
-void addSlistItem( types::CurlSlistUptr& slist, const std::string& item )
+void addSlistItem( types::CurlSlistUptr& slist, const std::string& item ) noexcept
 {
      addSlistItem( slist, item.c_str() );
 }
 
 
-void addSlistItem( types::CurlSlistUptr& slist, std::string&& item )
+void addSlistItem( types::CurlSlistUptr& slist, std::string&& item ) noexcept
 {
      addSlistItem( slist, item.c_str() );
 }
@@ -56,7 +56,7 @@ void addSlistItem( types::CurlSlistUptr& slist, std::string&& item )
 void setPlainAuth(
      const types::CurlUptr& curl,
      const std::string& login,
-     const std::string& password )
+     const std::string& password ) noexcept
 {
      curl_easy_setopt( curl.get(), CURLOPT_USERNAME, login.c_str() );
      curl_easy_setopt( curl.get(), CURLOPT_PASSWORD, password.c_str() );
@@ -65,8 +65,7 @@ void setPlainAuth(
 
 void setConnectionTimeout(
      const types::CurlUptr& curl,
-     const boost::posix_time::time_duration& timeout
-     )
+     const boost::posix_time::time_duration& timeout ) noexcept
 {
      curl_easy_setopt( curl.get(),  CURLOPT_CONNECTTIMEOUT, timeout.total_seconds() );
 }
@@ -74,8 +73,7 @@ void setConnectionTimeout(
 
 void setRequestTimeout(
      const types::CurlUptr& curl,
-     const boost::posix_time::time_duration& timeout
-     )
+     const boost::posix_time::time_duration& timeout ) noexcept
 {
      curl_easy_setopt( curl.get(),  CURLOPT_TIMEOUT, timeout.total_seconds() );
 }

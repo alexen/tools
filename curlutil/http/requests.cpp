@@ -23,7 +23,7 @@ namespace requests {
 namespace {
 
 
-static long getHttpStatus( const base::types::CurlUptr& curl )
+static long getHttpStatus( const base::types::CurlUptr& curl ) noexcept
 {
      long httpStatus = 0;
      curl_easy_getinfo( curl.get(), CURLINFO_RESPONSE_CODE, &httpStatus );

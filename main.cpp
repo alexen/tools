@@ -17,7 +17,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <logger/syslogger.h>
-#include <network/udp/func.h>
+#include <network/udp/utils.h>
 #include <stopwatch/stopwatch.h>
 #include <stopwatch/stopwatch_io.h>
 

@@ -5,7 +5,7 @@
 ///     Author: alexen
 ///
 
-#include <network/udp/func.h>
+#include <network/udp/utils.h>
 #include <unistd.h>
 #include <string.h>
 #include <memory>
@@ -14,6 +14,25 @@
 namespace tools {
 namespace network {
 namespace udp {
+
+
+namespace {
+namespace inner {
+
+
+static int socket( int pfamily, std::error_code& ec ) noexcept
+{
+     const auto sock = socket( pfamily, SOCK_DGRAM, 0 ) ;
+     if( sock < 0 )
+     {
+          ec.assign( errno, std::system_category() );
+     }
+     return sock;
+}
+
+
+} // namespace inner
+} // namespace {unnamed}
 
 
 Connection::UniversalSockaddr::UniversalSockaddr() noexcept
@@ -43,29 +62,6 @@ Connection::~Connection()
 }
 
 
-int socket( int pfamily, std::error_code& ec ) noexcept
-{
-     const auto sock = socket( pfamily, SOCK_DGRAM, 0 ) ;
-     if( sock < 0 )
-     {
-          ec.assign( errno, std::system_category() );
-     }
-     return sock;
-}
-
-
-int socket( int pfamily ) throw( std::system_error )
-{
-     std::error_code ec;
-     const auto sock = socket( pfamily, ec );
-     if( ec )
-     {
-          throw std::system_error( ec, "create UDP socket" );
-     }
-     return sock;
-}
-
-
 Connection connect( const char* const hostname, int port, std::error_code& ec ) noexcept
 {
      addrinfo* info = nullptr;
@@ -78,7 +74,7 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
 
      std::unique_ptr< addrinfo, decltype( &freeaddrinfo ) > autocleaner( info, &freeaddrinfo );
 
-     const auto sockfd = socket( info->ai_family, ec );
+     const auto sockfd = inner::socket( info->ai_family, ec );
      if( ec )
      {
           return Connection{};

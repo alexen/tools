@@ -5,6 +5,7 @@
 ///     Author: alexen
 ///
 
+#include <cerrno>
 #include <set>
 #include <iostream>
 #include <fstream>

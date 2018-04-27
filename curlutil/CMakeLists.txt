@@ -18,5 +18,8 @@ add_library(${NAME} ${SRCS})
 target_link_libraries(${NAME}
      ${CURL_LIBRARIES}
 )
-install(TARGETS ${NAME} LIBRARY DESTINATION lib)
+install(TARGETS ${NAME} 
+     ARCHIVE DESTINATION lib
+     LIBRARY DESTINATION lib
+)
 install(FILES ${HDRS} DESTINATION include/tools/${NAME})

@@ -59,6 +59,7 @@ void extendHttpHeaders(
      types::Headers&& headers
      ) noexcept;
 
+
 /// Перегрузка для более human-readable использования
 ///
 /// Пример использование с учетом стандарта c++11:
@@ -80,6 +81,7 @@ void extendHttpHeaders(
      const std::string& value
      ) noexcept;
 
+
 /// Устанавливает параметры basic-авторизации для HTTP-протокола
 void setBasicAuth(
      const base::types::CurlUptr& curl,
@@ -87,8 +89,10 @@ void setBasicAuth(
      const std::string& password
      ) noexcept;
 
+
 /// Устанавливает значение User-Agent для HTTP-протокола
 void setUserAgent( const base::types::CurlUptr& curl, const std::string& userAgent ) noexcept;
+
 
 /// Устанавливает выходной поток для записи HTTP-хедеров ответа удаленного сервера
 void setResponseHeadersOutput( const base::types::CurlUptr& curl, std::ostream& ) noexcept;

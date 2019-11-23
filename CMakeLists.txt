@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
+project(tools)
+
 add_definitions(-std=c++17)
 add_definitions(-Wall -Werror -Wextra -pedantic)
 
@@ -11,6 +13,13 @@ include_directories(${CMAKE_SOURCE_DIR})
 # Устанавливаем флаги для Debug-сборки
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb3 -O0 -fno-inline")
 
+# Настройки сборки проекта
+set(BUILD_SHARED_LIBS ON CACHE BOOLEAN "Build shared libs")
+set(TEST_ENABLED ON CACHE BOOLEAN "Build tests")
+
+message(STATUS "Build shared libs: ${BUILD_SHARED_LIBS}")
+message(STATUS "Tests enabled: ${TEST_ENABLED}")
+
 set(BOOST_ROOT ${LOCAL_ROOT})
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
@@ -19,6 +28,11 @@ add_definitions(-DBOOST_ALLOW_DEPRECATED_HEADERS)
 
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
+
+if(${TEST_ENABLED})
+     add_subdirectory(googletest)
+     enable_testing()
+endif()
 
 add_subdirectory(stopwatch)
 add_subdirectory(logger)

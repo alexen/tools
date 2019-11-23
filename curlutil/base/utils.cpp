@@ -18,7 +18,7 @@ namespace base {
 namespace utils {
 
 
-types::CurlUptr makeCurl() throw( errors::CurlError )
+types::CurlUptr makeCurl()
 {
      auto curl = curl_easy_init();
      if( !curl )

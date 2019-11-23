@@ -22,7 +22,7 @@ namespace utils {
 
 /// Возвращает умный указатель на инициализированный объект CURL с проверкой ошибок
 /// @throw errors::CurlError при возникновении ошибок инициализации
-types::CurlUptr makeCurl() throw( errors::CurlError );
+types::CurlUptr makeCurl();
 
 /// Возвращает умный указатель на инициализированный объект curl_slist
 ///

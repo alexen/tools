@@ -11,11 +11,13 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <system_error>
+
 #include <boost/utility/string_ref.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/random_generator.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+
 #include <logger/syslogger.h>
 #include <network/udp/utils.h>
 #include <stopwatch/stopwatch.h>
@@ -31,7 +33,6 @@ void measureSend( const unsigned count, const char* const host, int port, const 
      std::set< int > errors;
      for( unsigned i = 0; i < count; ++i )
      {
-          std::error_code ec;
           const auto n = tools::network::udp::send( host, port, message );
           if( n > 0 )
           {
@@ -51,7 +52,7 @@ void measureSend( const unsigned count, const char* const host, int port, const 
      std::cout << "\tstat: success: " << success << ", failed: " << failed << ", unknown: " << unknown << "\n";
      for( const auto err: errors )
      {
-          std::cout << "\t" << strerror( err ) << "\n";
+          std::cout << "\t" << std::system_category().message( err ) << "\n";
      }
 }
 
@@ -84,7 +85,7 @@ void measureSend( const unsigned count, const tools::network::udp::Connection& c
      std::cout << "\tstat: success: " << success << ", failed: " << failed << ", unknown: " << unknown << "\n";
      for( const auto err: errors )
      {
-          std::cout << "\t" << strerror( err ) << "\n";
+          std::cout << "\t" << std::system_category().message( err ) << "\n";
      }
 }
 

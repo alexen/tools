@@ -84,7 +84,7 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
 }
 
 
-Connection connect( const char* const hostname, int port ) throw( std::system_error )
+Connection connect( const char* const hostname, int port )
 {
      std::error_code ec;
 
@@ -135,7 +135,7 @@ int send( const char* const hostname, int port, const std::string& message, std:
 }
 
 
-int send( const char* const hostname, int port, const char* data, std::size_t datalen ) throw( std::system_error )
+int send( const char* const hostname, int port, const char* data, std::size_t datalen )
 {
      std::error_code ec;
      const auto& c = connect( hostname, port, ec );
@@ -147,7 +147,7 @@ int send( const char* const hostname, int port, const char* data, std::size_t da
 }
 
 
-int send( const char* const hostname, int port, const std::string& message ) throw( std::system_error )
+int send( const char* const hostname, int port, const std::string& message )
 {
      return send( hostname, port, message.c_str(), message.size() );
 }

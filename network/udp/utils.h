@@ -92,7 +92,7 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
 
 /// Возвращает структуру с данными открытого UDP-соединения, но в случае ошибки выбрасывается исключение
 /// @throw std::system_error в случае ошибок подключения
-Connection connect( const char* const hostname, int port ) throw( std::system_error );
+Connection connect( const char* const hostname, int port );
 
 
 /// Отправляет данные в предварительно созданное соединение @p Connection
@@ -127,12 +127,12 @@ int send( const char* const hostname, int port, const std::string& message, std:
 
 /// Аналогичные функции отправки данных по UDP-протоколу, но генерирующие исключения в случае возникновения ошибок
 /// @throw std::system_error при ошибках соединения
-int send( const char* const hostname, int port, const char* data, std::size_t datalen ) throw( std::system_error );
+int send( const char* const hostname, int port, const char* data, std::size_t datalen );
 
 
 /// Перегрузка для типа @p std::string, генерирующая исключение в случае возникновения ошибок
 /// @throw std::system_error при ошибках соединения
-int send( const char* const hostname, int port, const std::string& message ) throw( std::system_error );
+int send( const char* const hostname, int port, const std::string& message );
 
 
 } // namespace udp

@@ -29,8 +29,10 @@ add_definitions(-DBOOST_ALLOW_DEPRECATED_HEADERS)
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 
-if(${TEST_ENABLED})
+if(TEST_ENABLED)
+     include(CTest)
      add_subdirectory(googletest)
+     include_directories(googletest/googletest/include)
      enable_testing()
 endif()
 

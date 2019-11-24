@@ -82,10 +82,10 @@ public:
 };
 
 
-/// Возвращает структуру с данными открытого UDP-соединения, в случае ошибок заполняет переменную @p ec
+/// Возвращает структуру с данными открытого UDP-соединения, в случае ошибок заполняет переменную @a ec
 /// @param hostname имя удаленного хоста или IP адрес (поддерживаются обе версии протокола IP)
 /// @param port удаленный порт подключения
-/// @param[out] ec ссылка на объект @p std::error_code, в которую будет помещена информация об ошибке при ее возникновении
+/// @param[out] ec ссылка на объект @a std::error_code, в которую будет помещена информация об ошибке при ее возникновении
 /// @return структура с информацией о подключении UDP
 Connection connect( const char* const hostname, int port, std::error_code& ec ) noexcept;
 
@@ -95,19 +95,31 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
 Connection connect( const char* const hostname, int port );
 
 
-/// Отправляет данные в предварительно созданное соединение @p Connection
+/// Отправляет данные в предварительно созданное соединение @a Connection
 /// @param c Созданное соединение UDP
 /// @param data Указатель на начало пересылаемых данных
 /// @param datalen Длина передаваемых данных
-/// @return количество отправленных данных в байтах, в случае ошибки возвращается -1 и устанавливается errno
-int send( const Connection& c, const char* data, std::size_t datalen ) noexcept;
+/// @param[out] ec ссылка на объект @a std::error_code, в которую будет помещена информация об ошибке при ее возникновении
+/// @return количество отправленных данных в байтах
+/// @note В случае ошибки возвращаемое значение не определено.
+/// @note Данная функция является единственной, которая содержит реализацию отправки данных через UDP. Все остальные перегрузки выражены через эту функцию.
+std::size_t send( const Connection& c, const char* data, std::size_t datalen, std::error_code& ec ) noexcept;
 
 
-/// Перегрузка для типа @p std::string
-int send( const Connection& c, const std::string& message ) noexcept;
+/// Перегрузка функции, не выбрасывающей исключений, для типа @a std::string
+/// @note В случае ошибки возвращаемое значение не определено
+std::size_t send( const Connection& c, const std::string& message, std::error_code& ec ) noexcept;
 
 
-/// Отправляет данные по UDP-протоколу в @p hostname и @p port,
+/// Перегрузка, которая в случае ошибки выбрасывает исключение std::system_error
+std::size_t send( const Connection& c, const char* data, std::size_t datalen );
+
+
+/// Перегрузка, которая в случае ошибки выбрасывает исключение std::system_error
+std::size_t send( const Connection& c, const std::string& message );
+
+
+/// Отправляет данные по UDP-протоколу в @a hostname и @a port,
 /// соединение открывается и закрывается автоматически при каждой отправке
 ///
 /// @note Осуществляется неявняй вызов функций connect()
@@ -115,24 +127,24 @@ int send( const Connection& c, const std::string& message ) noexcept;
 /// @param port удаленный порт подключения
 /// @param data Указатель на начало пересылаемых данных
 /// @param datalen Длина передаваемых данных
-/// @param[out] ec ссылка на объект @p std::error_code, в которую будет помещена информация об ошибке при ее возникновении
-/// @return количество отправленных данных в байтах, в случае ошибки возвращается -1 и устанавливается errno
-/// @note Формирование переменной @p ec происходит только при внутреннем вызове функции connect()
-int send( const char* const hostname, int port, const char* data, std::size_t datalen, std::error_code& ec ) noexcept;
+/// @param[out] ec ссылка на объект @a std::error_code, в которую будет помещена информация об ошибке при ее возникновении
+/// @return количество отправленных данных в байтах, в случае возникновения ошибки возвращаемое значение не определено
+std::size_t send( const char* const hostname, int port, const char* data, std::size_t datalen, std::error_code& ec ) noexcept;
 
 
-/// Перегрузка для типа @p std::string
-int send( const char* const hostname, int port, const std::string& message, std::error_code& ec ) noexcept;
+/// Перегрузка функции, не выбрасывающей исключений, для типа @a std::string
+/// @note В случае ошибки возвращаемое значение не определено
+std::size_t send( const char* const hostname, int port, const std::string& message, std::error_code& ec ) noexcept;
 
 
 /// Аналогичные функции отправки данных по UDP-протоколу, но генерирующие исключения в случае возникновения ошибок
 /// @throw std::system_error при ошибках соединения
-int send( const char* const hostname, int port, const char* data, std::size_t datalen );
+std::size_t send( const char* const hostname, int port, const char* data, std::size_t datalen );
 
 
-/// Перегрузка для типа @p std::string, генерирующая исключение в случае возникновения ошибок
+/// Перегрузка для типа @a std::string, генерирующая исключение в случае возникновения ошибок
 /// @throw std::system_error при ошибках соединения
-int send( const char* const hostname, int port, const std::string& message );
+std::size_t send( const char* const hostname, int port, const std::string& message );
 
 
 } // namespace udp

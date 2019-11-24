@@ -103,56 +103,74 @@ Connection connect( const char* const hostname, int port )
 }
 
 
-int send( const Connection& c, const char* data, std::size_t datalen ) noexcept
+std::size_t send( const Connection& c, const char* data, std::size_t datalen, std::error_code& ec ) noexcept
 {
-     return sendto(
+     const auto bytes = sendto(
           c.sockfd,
           data,
           datalen,
           0,
           reinterpret_cast< const sockaddr* >( &c.addr.addr ),
-          c.addr.addrlen );
+          c.addr.addrlen
+          );
+     if( bytes < 0 )
+     {
+          ec.assign( errno, std::system_category() );
+     }
+     return static_cast< std::size_t >( bytes );
 }
 
 
-int send( const Connection& c, const std::string& message ) noexcept
+std::size_t send( const Connection& c, const std::string& message, std::error_code& ec ) noexcept
+{
+     return send( c, message.data(), message.size(), ec );
+}
+
+
+std::size_t send( const Connection& c, const char* data, std::size_t datalen )
+{
+     std::error_code ec;
+     const auto bytes = send( c, data, datalen, ec );
+     if( ec )
+     {
+          throw std::system_error{ ec, "sending via UDP" };
+     }
+     return bytes;
+}
+
+
+std::size_t send( const Connection& c, const std::string& message )
 {
      return send( c, message.c_str(), message.size() );
 }
 
 
-int send( const char* const hostname, int port, const char* data, std::size_t datalen, std::error_code& ec ) noexcept
+std::size_t send( const char* const hostname, int port, const char* data, std::size_t datalen, std::error_code& ec ) noexcept
 {
-     const auto& c = connect( hostname, port, ec );
+     const auto c = connect( hostname, port, ec );
      if( ec )
      {
-          return -1;
+          return static_cast< std::size_t >( -1 );
      }
-     return send( c, data, datalen );
+     return send( c, data, datalen, ec );
 }
 
 
-int send( const char* const hostname, int port, const std::string& message, std::error_code& ec ) noexcept
+std::size_t send( const char* const hostname, int port, const std::string& message, std::error_code& ec ) noexcept
 {
-     return send( hostname, port, message.c_str(), message.size(), ec );
+     return send( hostname, port, message.data(), message.size(), ec );
 }
 
 
-int send( const char* const hostname, int port, const char* data, std::size_t datalen )
+std::size_t send( const char* const hostname, int port, const char* data, std::size_t datalen )
 {
-     std::error_code ec;
-     const auto& c = connect( hostname, port, ec );
-     if( ec )
-     {
-          throw std::system_error( ec, "create UDP connection" );
-     }
-     return send( c, data, datalen );
+     return send( connect( hostname, port ), data, datalen );
 }
 
 
-int send( const char* const hostname, int port, const std::string& message )
+std::size_t send( const char* const hostname, int port, const std::string& message )
 {
-     return send( hostname, port, message.c_str(), message.size() );
+     return send( hostname, port, message.data(), message.size() );
 }
 
 

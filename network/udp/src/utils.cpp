@@ -6,9 +6,12 @@
 ///
 
 #include <network/udp/utils.h>
+
 #include <unistd.h>
 #include <string.h>
 #include <memory>
+
+#include <network/error.h>
 
 
 namespace tools {
@@ -68,7 +71,7 @@ Connection connect( const char* const hostname, int port, std::error_code& ec ) 
      const auto error = getaddrinfo( hostname, std::to_string( port ).c_str(), nullptr, &info );
      if( error )
      {
-          ec.assign( error, std::system_category() );
+          ec.assign( error, posixNetworkCategory() );
           return Connection{};
      }
 

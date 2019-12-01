@@ -5,8 +5,8 @@
 ///     Author: alexen
 ///
 
-#include <logger/syslogger.h>
-#include <logger/tools.h>
+#include <logging/syslogger.h>
+#include <logging/tools.h>
 #include <syslog.h>
 
 namespace logger {

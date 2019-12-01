@@ -1,6 +1,12 @@
-set(NAME logger)
-set(HDRS syslogger.h tools.h)
-set(SRCS src/syslogger.cpp src/tools.cpp)
+set(NAME logging)
+set(HDRS
+     syslogger.h
+     tools.h
+)
+set(SRCS
+     src/syslogger.cpp
+     src/tools.cpp
+)
 add_library(${NAME} ${SRCS})
 install(TARGETS ${NAME}
      ARCHIVE DESTINATION lib

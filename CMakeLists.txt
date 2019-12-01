@@ -14,8 +14,9 @@ include_directories(${CMAKE_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb3 -O0 -fno-inline")
 
 # Настройки сборки проекта
-set(BUILD_SHARED_LIBS ON CACHE BOOLEAN "Build shared libs")
-set(TEST_ENABLED ON CACHE BOOLEAN "Build tests")
+set(BUILD_SHARED_LIBS ON CACHE BOOLEAN "")
+set(TEST_ENABLED ON CACHE BOOLEAN "")
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "")
 
 message(STATUS "Build shared libs: ${BUILD_SHARED_LIBS}")
 message(STATUS "Tests enabled: ${TEST_ENABLED}")
@@ -37,10 +38,15 @@ if(TEST_ENABLED)
 endif()
 
 add_subdirectory(stopwatch)
-add_subdirectory(logger)
+add_subdirectory(logging)
 add_subdirectory(network)
 add_subdirectory(curlutil)
 
 set(NAME tools)
 add_executable(${NAME} main.cpp)
-target_link_libraries(${NAME} logger stopwatch network curlutil)
+target_link_libraries(${NAME}
+     logging
+     stopwatch
+     network
+     curlutil
+)

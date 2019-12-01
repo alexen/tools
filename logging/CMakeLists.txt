@@ -1,9 +1,11 @@
 set(NAME logging)
 set(HDRS
+     syslog_ostreambuf.h
      syslogger.h
      tools.h
 )
 set(SRCS
+     src/syslog_ostreambuf.cpp
      src/syslogger.cpp
      src/tools.cpp
 )

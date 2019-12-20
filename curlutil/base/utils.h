@@ -32,6 +32,34 @@ types::CurlUptr makeCurl();
 types::CurlSlistUptr makeSlist() noexcept;
 
 
+/// Оборачивает указатель на динамическую строку, создаваемую CURLом в умный указатель
+/// с автоочисткой с помощью функции @a curl_free()
+types::CurlStringUptr makeString( char* s ) noexcept;
+
+
+/// Конвертирует неразрешенные для URL символы из блока данных @a s размера @a len в их
+/// шестнадцатеричые представления вида %NN
+/// @return Указатель на c-style строку с нулевым терминатором
+std::string urlEscape( const types::CurlUptr& curl, const char* s, const std::size_t len );
+
+
+/// Перегрузка для работы с типом std::string
+std::string urlEscape( const types::CurlUptr& curl, const std::string& data );
+
+
+/// Перегрузка с выводом в выходной поток ввода-вывода
+///
+/// @note Так как URL (или произвольный блок данных) могут иметь значительную длину, целесообразнее
+/// выводить результат в выходной поток ввода-вывода.
+///
+/// @throw CurlError в случае ошибки
+void urlEscape( const types::CurlUptr& curl, const char* s, const std::size_t len, std::ostream& os );
+
+
+/// Перегрузка для работы с типом std::string
+void urlEscape( const types::CurlUptr& curl, const std::string& data, std::ostream& os );
+
+
 /// Функция, обновляющая (расширяющая) список, на который указывает @p types::CurlSlistUptr
 void addSlistItem( types::CurlSlistUptr& slist, const char* const item ) noexcept;
 

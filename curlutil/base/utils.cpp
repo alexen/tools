@@ -35,6 +35,41 @@ types::CurlSlistUptr makeSlist() noexcept
 }
 
 
+types::CurlStringUptr makeString( char* s ) noexcept
+{
+     return types::CurlStringUptr{ s, curl_free };
+}
+
+
+std::string urlEscape( const types::CurlUptr& curl, const char* s, const std::size_t len )
+{
+     const auto esc = makeString( curl_easy_escape( curl.get(), s, len ) );
+     if( !esc )
+     {
+          BOOST_THROW_EXCEPTION( errors::CurlError{ "escape URL error" } );
+     }
+     return std::string{ esc.get() };
+}
+
+
+std::string urlEscape( const types::CurlUptr& curl, const std::string& data )
+{
+     return urlEscape( curl, data.data(), data.size() );
+}
+
+
+void urlEscape( const types::CurlUptr& curl, const char* s, const std::size_t len, std::ostream& os )
+{
+     os << urlEscape( curl, s, len );
+}
+
+
+void urlEscape( const types::CurlUptr& curl, const std::string& data, std::ostream& os )
+{
+     urlEscape( curl, data.data(), data.size(), os );
+}
+
+
 void addSlistItem( types::CurlSlistUptr& slist, const char* const item ) noexcept
 {
      slist.reset( curl_slist_append( slist.release(), item ) );

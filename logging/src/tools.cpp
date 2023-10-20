@@ -13,43 +13,26 @@ namespace logger {
 namespace tools {
 
 
-void slice( const std::size_t chunkSize, const char* text, const std::size_t size,
-     std::function< void( const char*, std::size_t ) >&& cb )
+void slice( const std::size_t chunkSize, std::string_view data, SliceHandler&& cb )
 {
-     const char* current = text;
-     const char* const end = text + size;
+     auto curr = data.begin();
+     const auto end = data.end();
      std::size_t bytes = 0;
 
-     while( current != end )
+     while( curr != end )
      {
-          bytes = std::min( chunkSize, static_cast< std::size_t >( end - current ) );
-          cb( current, bytes );
-          current += bytes;
+          bytes = std::min( chunkSize, static_cast< std::size_t >( std::distance( curr, end ) ) );
+          cb({ curr, bytes });
+          std::advance( curr, bytes );
      }
 }
 
 
-void slice( const std::size_t chunkSize, const std::string& text,
-     std::function< void( const char*, std::size_t ) >&& cb )
+void slice( const std::size_t chunkSize, std::string_view data, std::ostream& os )
 {
-     slice( chunkSize, text.c_str(), text.size(), std::move( cb ) );
-}
-
-
-void slice( const std::size_t chunkSize, const char* text, const std::size_t size, std::ostream& os )
-{
-     slice( chunkSize, text, size,
-          [ &os ]( const char* ptr, std::size_t size )
-          {
-               os.write( ptr, size );
-          }
-     );
-}
-
-
-void slice( const std::size_t chunkSize, const std::string& text, std::ostream& os )
-{
-     slice( chunkSize, text.c_str(), text.size(), os );
+     slice( chunkSize, data, [ &os ]( std::string_view chunk ) {
+          os.write( chunk.data(), chunk.size() );
+     });
 }
 
 

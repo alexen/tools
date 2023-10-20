@@ -9,33 +9,26 @@
 
 #include <cstddef>
 #include <functional>
+#include <string_view>
 
 
 namespace logger {
 namespace tools {
 
 
+using SliceHandler = std::function< void( std::string_view ) >;
+
+
 /// Нарезает длинный текст кусками по @p chunkSize и передает в колбек @p cb
 /// @param chunkSize размер порции в байтах, на которые нарезается длинный текст
-/// @param text указатель на строку текста
-/// @param size размер строки текста
+/// @param data блок исходных данных
 /// @param cb колбек, который вызывается для каждой порции текста
 /// @throw кидает только те исключения, которые генерируются колбеком @p cb
-void slice( const std::size_t chunkSize, const char* text, const std::size_t size,
-     std::function< void( const char*, std::size_t ) >&& cb );
-
-
-/// Перегрузка для типа std::string (вызывает первый вариант slice())
-void slice( const std::size_t chunkSize, const std::string& text,
-     std::function< void( const char*, std::size_t ) >&& cb );
+void slice( const std::size_t chunkSize, std::string_view data, SliceHandler&& cb );
 
 
 /// Перегрузка для записи результатов в std::ostream (вызывает первый вариант slice())
-void slice( const std::size_t chunkSize, const char* text, const std::size_t size, std::ostream& os );
-
-
-/// Перегрузка для типа std::string (вызывает первый вариант slice())
-void slice( const std::size_t chunkSize, const std::string& text, std::ostream& os );
+void slice( const std::size_t chunkSize, std::string_view data, std::ostream& os );
 
 
 } // namespace tools

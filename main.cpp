@@ -26,7 +26,6 @@
 #include <boost/iostreams/operations.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <boost/optional.hpp>
-#include <boost/bind.hpp>
 
 #include <logging/syslog_ostreambuf.h>
 #include <logging/syslogger.h>

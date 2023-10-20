@@ -30,12 +30,12 @@ SysLogger::LogStream::~LogStream()
 
 void SysLogger::flush( int severity, const std::string& prefix, std::string&& message )
 {
-     tools::slice( 4096, message,
-          [ severity, &prefix ]( const char* ptr, std::size_t size )
+     tools::slice( 4096u, message,
+          [ severity, &prefix ]( std::string_view chunk )
           {
                /// static_cast подавляет предупреждение компилятора
                /// "warning: field precision specifier ‘.*’ expects argument of type ‘int’..."
-               syslog( severity, "%s: %.*s", prefix.c_str(), static_cast< int >( size ), ptr );
+               syslog( severity, "%s: %.*s", prefix.c_str(), static_cast< int >( chunk.size() ), chunk.data() );
           }
      );
 }

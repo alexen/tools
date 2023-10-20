@@ -1,17 +1,15 @@
-set(NAME logging)
-set(HDRS
-     syslog_ostreambuf.h
-     syslogger.h
-     tools.h
+set(THIS logging)
+add_library(${THIS})
+target_sources(
+     ${THIS}
+     PRIVATE
+          src/syslog_ostreambuf.cpp
+          src/syslogger.cpp
+          src/tools.cpp
+     PUBLIC
+          syslog_ostreambuf.h
+          syslogger.h
+          tools.h
 )
-set(SRCS
-     src/syslog_ostreambuf.cpp
-     src/syslogger.cpp
-     src/tools.cpp
-)
-add_library(${NAME} ${SRCS})
-install(TARGETS ${NAME}
-     ARCHIVE DESTINATION lib
-     LIBRARY DESTINATION lib
-)
-install(FILES ${HDRS} DESTINATION include/tools/${NAME})
+install(TARGETS ${THIS})
+# @todo Installation for headers

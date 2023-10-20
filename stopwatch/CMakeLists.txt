@@ -1,16 +1,30 @@
-set(NAME stopwatch)
-set(HDRS stopwatch.h stopwatch_io.h)
-set(SRCS src/stopwatch.cpp src/stopwatch_io.cpp)
-add_library(${NAME} ${SRCS})
-install(TARGETS ${NAME}
-     ARCHIVE DESTINATION lib
-     LIBRARY DESTINATION lib
+set(THIS stopwatch)
+add_library(${THIS})
+target_sources(
+     ${THIS}
+     PRIVATE
+          src/stopwatch.cpp
+          src/stopwatch_io.cpp
+     PUBLIC
+          stopwatch.h
+          stopwatch_io.h
 )
-install(FILES ${HDRS} DESTINATION include/tools/${NAME})
+install(TARGETS ${THIS})
 
 if(BUILD_TESTING)
-     set(TESTNAME ${NAME}-test)
-     add_executable(${TESTNAME} test/stopwatch_test.cpp)
-     target_link_libraries(${TESTNAME} ${NAME} gtest gtest_main)
-     add_test(${NAME} ${TESTNAME})
+     set(THIS_UTEST ${THIS}-test)
+     add_executable(${THIS_UTEST}
+          test/stopwatch_test.cpp
+     )
+     target_link_libraries(
+          ${THIS_UTEST}
+          PRIVATE
+               ${THIS}
+               gtest
+               gtest_main
+     )
+     add_test(
+          NAME ${THIS}
+          COMMAND ${THIS_UTEST}
+     )
 endif()

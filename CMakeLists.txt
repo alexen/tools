@@ -13,12 +13,6 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BuildConstraints)
 
-# Modern CMake: search GTest, if not found - build it
-find_package(GTest QUIET)
-if(NOT GTest_FOUND)
-     include(GTest)
-endif()
-
 # Modern CMake: use main project target to accumulate
 # and propagate global project properties and parameters
 add_library(${PROJECT_NAME} INTERFACE)
@@ -47,33 +41,25 @@ target_include_directories(
           ${CMAKE_CURRENT_LIST_DIR}
      )
 
-return()
-
-find_package(Boost REQUIRED COMPONENTS)
+find_package(Boost REQUIRED COMPONENTS headers)
 
 add_definitions(-DBOOST_ALLOW_DEPRECATED_HEADERS)
 
-find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIRS})
-
-include(CTest)
-
-if(BUILD_TESTING)
-     add_subdirectory(googletest)
-     include_directories(googletest/googletest/include)
+find_package(CURL QUIET)
+if(NOT CURL_FOUND)
+     include(CURL)
 endif()
 
-add_subdirectory(stopwatch)
-add_subdirectory(logging)
-add_subdirectory(network)
-add_subdirectory(curlutil)
+include(CTest)
+if(BUILD_TESTING)
+# Modern CMake: search GTest, if not found - build it
+     find_package(GTest QUIET)
+     if(NOT GTest_FOUND)
+          include(GTest)
+     endif()
+endif()
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(
-     ${PROJECT_NAME}
-     PRIVATE
-          logging
-          stopwatch
-          network
-          curlutil
-)
+add_subdirectory(curlutil)
+#add_subdirectory(stopwatch)
+#add_subdirectory(logging)
+#add_subdirectory(network)
